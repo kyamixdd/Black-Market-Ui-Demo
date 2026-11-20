@@ -2,60 +2,130 @@
 
 @layer base {
   :root {
-    --bg-outer: #CBD2D4;
-    --bg-terminal: #111113;
-    --bg-panel: #151517;
-    --bg-elevated: #1D1D20;
-    --border-subtle: #2A2A2D;
-    --border-panel: #303033;
-    --text-primary: #F1F1F1;
-    --text-secondary: #929292;
-    --text-muted: #6C6C72;
-    --accent-positive: #4D9E6E;
-    --accent-negative: #C05656;
+    color-scheme: dark;
+    --bg-outer: #09090B;
+    --bg-terminal: #0D0D10;
+    --bg-panel: #111114;
+    --bg-elevated: #19191E;
+    --bg-hover: #202026;
+    --border-subtle: #24242A;
+    --border-panel: #303038;
+    --border-strong: #41414A;
+    --text-primary: #F4F4F5;
+    --text-secondary: #A1A1AA;
+    --text-muted: #71717A;
+    --text-disabled: #52525B;
+    --accent-positive: #86A995;
+    --accent-negative: #B77E7E;
+    --terminal-radius: 7px;
   }
 
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 
-  html,
-  body {
+  html, body, #root {
+    min-height: 100%;
     margin: 0;
     padding: 0;
-    background-color: var(--bg-outer);
+  }
+
+  html, body {
+    width: 100%;
+    background: var(--bg-outer);
     color: var(--text-primary);
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-feature-settings: "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
+
+  body { min-width: 320px; }
+
+  button, input, select, textarea { font: inherit; }
+
+  button { -webkit-tap-highlight-color: transparent; }
+
+  button:focus-visible, input:focus-visible, select:focus-visible,
+  textarea:focus-visible, [tabindex]:focus-visible {
+    outline: 1px solid #777780;
+    outline-offset: 2px;
+  }
+
+  ::selection { background: #D4D4D8; color: #09090B; }
 }
 
 .font-mono-num {
   font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 
-/* Compact dark terminal scrollbars */
+/* Obsidian terminal shell and panel treatment */
+header {
+  background-color: var(--bg-terminal) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+header > div:first-child {
+  min-height: 58px;
+}
+
+section[class*="bg-[#151517]"] {
+  background: var(--bg-panel) !important;
+  border-color: var(--border-panel) !important;
+  border-radius: var(--terminal-radius) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.018);
+  min-width: 0;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+section[class*="bg-[#151517]"]:hover {
+  border-color: #3A3A43 !important;
+}
+
+input, select, textarea {
+  color-scheme: dark;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #686873 !important;
+}
+
+.font-mono-num, .tabular-nums {
+  letter-spacing: -0.025em;
+}
+
+.terminal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #3A3A43 transparent;
+}
+
 .terminal-scroll::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
 }
-
-.terminal-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
+.terminal-scroll::-webkit-scrollbar-track { background: transparent; }
 .terminal-scroll::-webkit-scrollbar-thumb {
-  background: #303035;
-  border-radius: 2px;
+  background: #34343C;
+  border-radius: 8px;
+}
+.terminal-scroll::-webkit-scrollbar-thumb:hover { background: #50505A; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
-.terminal-scroll::-webkit-scrollbar-thumb:hover {
-  background: #48484F;
+@media (max-width: 639px) {
+  header > div:first-child { min-height: 54px; }
+  section[class*="bg-[#151517]"] { border-radius: 6px !important; }
 }
