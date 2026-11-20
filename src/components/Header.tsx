@@ -54,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="border-b border-[#242428] bg-[#111113] select-none">
-      <div className="flex items-center justify-between px-3 sm:px-4 h-[50px] gap-3">
+      <div className="flex items-center justify-between px-3 sm:px-4 h-[58px] gap-3">
         {/* Left: Brand + Search + Desktop Nav */}
         <div className="flex items-center gap-5 min-w-0 flex-1">
           <button
