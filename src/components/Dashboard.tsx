@@ -103,8 +103,8 @@ export const Dashboard: React.FC = () => {
       : '0.00';
 
   return (
-    <div className="min-h-screen w-full bg-[#CBD2D4] flex items-center justify-center p-2 sm:p-4 lg:p-6">
-      <div className="w-full max-w-[1050px] bg-[#111113] border border-[#28282C] rounded-[6px] overflow-hidden shadow-[0_20px_50px_rgba(17,17,19,0.20)]">
+    <div className="min-h-screen w-full bg-[#09090B] flex items-center justify-center p-1.5 sm:p-3 lg:p-6">
+      <div className="w-full max-w-[1480px] min-h-[calc(100vh-48px)] bg-[#0D0D10] border border-[#292930] rounded-[9px] overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.42)]">
         <Header
           selectedPair={selectedPair}
           onSelectPair={(pair) => {
@@ -116,7 +116,7 @@ export const Dashboard: React.FC = () => {
           onResetTerminal={handleResetTerminal}
         />
 
-        <main className="p-2.5 flex flex-col gap-2 lg:grid lg:grid-cols-[1fr_296px] lg:gap-2 lg:items-stretch">
+        <main className="p-2.5 sm:p-3.5 flex flex-col gap-2.5 lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-2.5 lg:items-stretch">
           {/* Left + Middle Primary Analytics Area (contents on <lg for intelligent mobile/tablet ordering) */}
           <div className="contents lg:flex lg:flex-col lg:gap-2 lg:min-w-0">
             {/* 1st on all viewports: Main Market Chart (Live Binance Spot REST + WS) */}
