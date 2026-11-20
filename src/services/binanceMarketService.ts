@@ -820,3 +820,55 @@ export function formatMarketPrice(val: number): string {
   if (val >= 10) return val.toFixed(3);
   return val.toFixed(4);
 }
+
+
+export interface MarketScreenerRow {
+  pair: string;
+  baseAsset: string;
+  quoteAsset: string;
+  price: number;
+  priceChangePercent: number;
+  quoteVolume: number;
+  highPrice: number;
+  lowPrice: number;
+  tradeCount: number;
+}
+
+export async function fetchMarketScreener(
+  signal?: AbortSignal
+): Promise<MarketScreenerRow[]> {
+  const raw = await fetchJsonWithValidation(`${REST_BASE}/api/v3/ticker/24hr`, signal);
+  if (!Array.isArray(raw)) {
+    throw new Error('Unexpected Binance 24h market ticker response');
+  }
+
+  return raw.flatMap((item): MarketScreenerRow[] => {
+    if (typeof item !== 'object' || item === null) return [];
+    const row = item as Record<string, unknown>;
+    const pair = typeof row.symbol === 'string' ? row.symbol : '';
+    if (!pair.endsWith('USDT')) return [];
+
+    const price = Number(row.lastPrice);
+    const change = Number(row.priceChangePercent);
+    const quoteVolume = Number(row.quoteVolume);
+    const highPrice = Number(row.highPrice);
+    const lowPrice = Number(row.lowPrice);
+    const tradeCount = Number(row.count);
+
+    if (![price, change, quoteVolume, highPrice, lowPrice].every(Number.isFinite) || price <= 0) {
+      return [];
+    }
+
+    return [{
+      pair,
+      baseAsset: extractBaseAsset(pair),
+      quoteAsset: 'USDT',
+      price,
+      priceChangePercent: change,
+      quoteVolume,
+      highPrice,
+      lowPrice,
+      tradeCount: Number.isFinite(tradeCount) ? tradeCount : 0,
+    }];
+  }).sort((a, b) => b.quoteVolume - a.quoteVolume);
+}
