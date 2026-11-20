@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Header, NavSection } from './Header';
 import { MarketChart } from './MarketChart';
 import { TransactionsHeatmap } from './TransactionsHeatmap';
@@ -9,6 +9,7 @@ import { PortfolioPanel } from './PortfolioPanel';
 import { UnlocksPanel } from './UnlocksPanel';
 import { AIAssistant } from './AIAssistant';
 import { Modal } from './Modal';
+import { CommandPalette, MarketScreenerModal, MarketWatchlist } from './MarketIntelligence';
 import { AI_SIGNALS_DEMO } from '../data/demoData';
 import { useBinanceMarket } from '../hooks/useBinanceMarket';
 import {
@@ -39,6 +40,7 @@ export const Dashboard: React.FC = () => {
   const [signalsModalOpen, setSignalsModalOpen] = useState(false);
   const [stakeModalOpen, setStakeModalOpen] = useState(false);
   const [alertsModalOpen, setAlertsModalOpen] = useState(false);
+  const [screenerOpen, setScreenerOpen] = useState(false);
 
   // Buy Demo State
   const [buyUsd, setBuyUsd] = useState('500');
@@ -69,7 +71,8 @@ export const Dashboard: React.FC = () => {
 
   const handleSelectNav = (nav: NavSection) => {
     setActiveNav(nav);
-    if (nav === 'AI Signals') setSignalsModalOpen(true);
+    if (nav === 'Market Screener') setScreenerOpen(true);
+    else if (nav === 'AI Signals') setSignalsModalOpen(true);
     else if (nav === 'Stake') {
       setStakeSubmitted(false);
       setStakeModalOpen(true);
@@ -89,6 +92,7 @@ export const Dashboard: React.FC = () => {
     setSignalsModalOpen(false);
     setStakeModalOpen(false);
     setAlertsModalOpen(false);
+    setScreenerOpen(false);
   };
 
   const estimatedTokens =
@@ -117,6 +121,13 @@ export const Dashboard: React.FC = () => {
         />
 
         <main className="p-2.5 sm:p-3.5 flex flex-col gap-2.5 lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-2.5 lg:items-stretch">
+          <div className="lg:col-span-2">
+            <MarketWatchlist
+              selectedPair={selectedPair}
+              onSelectPair={(pair) => { setSelectedPair(pair); setActiveNav('Terminal'); }}
+              onOpenScreener={() => setScreenerOpen(true)}
+            />
+          </div>
           {/* Left + Middle Primary Analytics Area (contents on <lg for intelligent mobile/tablet ordering) */}
           <div className="contents lg:flex lg:flex-col lg:gap-2 lg:min-w-0">
             {/* 1st on all viewports: Main Market Chart (Live Binance Spot REST + WS) */}
@@ -184,6 +195,22 @@ export const Dashboard: React.FC = () => {
           </aside>
         </main>
       </div>
+
+      <CommandPalette onAction={(action) => {
+        if (action === 'screener') setScreenerOpen(true);
+        else if (action === 'signals') setSignalsModalOpen(true);
+        else if (action === 'alerts') setAlertsModalOpen(true);
+        else if (action === 'stake') { setStakeSubmitted(false); setStakeModalOpen(true); }
+        else if (action === 'portfolio') {
+          setPortfolioHighlighted(true);
+          portfolioRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else if (action === 'reset') handleResetTerminal();
+      }} />
+      <MarketScreenerModal
+        isOpen={screenerOpen}
+        onClose={() => { setScreenerOpen(false); setActiveNav('Terminal'); }}
+        onSelectPair={(pair) => { setSelectedPair(pair); setActiveNav('Terminal'); }}
+      />
 
       {/* Buy Token Demo Modal */}
       <Modal
