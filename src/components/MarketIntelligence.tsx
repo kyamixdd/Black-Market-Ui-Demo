@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Activity, ArrowDown, ArrowUp, Command, ExternalLink, Loader2,
-  Plus, RefreshCw, Search, Star, Trash2, X, Zap,
+  Plus, RefreshCw, Search, Star, Trash2, X,
 } from 'lucide-react';
 import { Modal } from './Modal';
 import { MarketScreenerRow, fetchMarketScreener, formatMarketPrice } from '../services/binanceMarketService';
@@ -14,6 +14,7 @@ function useMarketRows(enabled: boolean) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
+  const [reloadNonce, setReloadNonce] = useState(0);
 
   useEffect(() => {
     if (!enabled) return;
@@ -45,13 +46,9 @@ function useMarketRows(enabled: boolean) {
       window.clearInterval(timer);
       controller?.abort();
     };
-  }, [enabled]);
+  }, [enabled, reloadNonce]);
 
-  return { rows, loading, error, updatedAt, refresh: () => {
-    if (!enabled) return;
-    setUpdatedAt(null);
-    setError('Refreshing market data…');
-  }};
+  return { rows, loading, error, updatedAt, refresh: () => setReloadNonce((value) => value + 1) };
 }
 
 function money(value: number) {
@@ -175,7 +172,7 @@ interface MarketScreenerModalProps {
 export const MarketScreenerModal: React.FC<MarketScreenerModalProps> = ({
   isOpen, onClose, onSelectPair,
 }) => {
-  const { rows, loading, error, updatedAt } = useMarketRows(isOpen);
+  const { rows, loading, error, updatedAt, refresh } = useMarketRows(isOpen);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<'All' | 'Gainers' | 'Losers'>('All');
   const [sort, setSort] = useState<'volume' | 'change'>('volume');
@@ -200,7 +197,10 @@ export const MarketScreenerModal: React.FC<MarketScreenerModalProps> = ({
         </div>
         <div className="flex items-center justify-between text-[9px] text-[#71717A]">
           <span>{loading ? 'Loading market universe…' : `${filtered.length} markets shown`}</span>
-          <button type="button" onClick={() => setSort((v) => v === 'volume' ? 'change' : 'volume')} className="inline-flex items-center gap-1 hover:text-white">Sort: {sort === 'volume' ? 'Volume' : '24h Change'} <Activity className="w-3 h-3" /></button>
+          <div className="flex items-center gap-3">
+            <button type="button" onClick={refresh} disabled={loading} className="inline-flex items-center gap-1 hover:text-white disabled:opacity-40"><RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} /> Refresh</button>
+            <button type="button" onClick={() => setSort((v) => v === 'volume' ? 'change' : 'volume')} className="inline-flex items-center gap-1 hover:text-white">Sort: {sort === 'volume' ? 'Volume' : '24h Change'} <Activity className="w-3 h-3" /></button>
+          </div>
         </div>
         <div className="max-h-[55vh] overflow-y-auto terminal-scroll border border-[#292930] rounded-[5px]">
           <div className="grid grid-cols-[1.1fr_1fr_0.8fr_0.9fr] gap-2 sticky top-0 bg-[#17171B] px-3 py-2 text-[9px] uppercase tracking-wide text-[#777780]">
