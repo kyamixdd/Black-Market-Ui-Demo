@@ -1,0 +1,6 @@
+{
+  "name": "Numora — Crypto Analytics Terminal",
+  "description": "Institutional monochrome cryptocurrency analytics terminal featuring interactive candlestick market charts, transaction heatmaps, holder cohorts, buy/sell volume, long/short ratios, portfolio tracking, token unlocks, and a local demo AI assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
