@@ -14,7 +14,7 @@ import { TokenSearch } from './TokenSearch';
 import { Dropdown } from './Dropdown';
 import { NOTIFICATIONS_DEMO, USER_PROFILE } from '../data/demoData';
 
-export type NavSection = 'Terminal' | 'AI Signals' | 'Stake' | 'Portfolio' | 'Smart Alerts';
+export type NavSection = 'Terminal' | 'Market Screener' | 'AI Signals' | 'Stake' | 'Portfolio' | 'Smart Alerts';
 
 interface HeaderProps {
   selectedPair: string;
@@ -40,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const unreadCount = notifications.filter((n) => n.unread).length;
 
-  const navItems: NavSection[] = ['AI Signals', 'Stake', 'Portfolio', 'Smart Alerts'];
+  const navItems: NavSection[] = ['Market Screener', 'AI Signals', 'Stake', 'Portfolio', 'Smart Alerts'];
 
   const handleCopyAddress = () => {
     navigator.clipboard?.writeText(USER_PROFILE.fullAddress).catch(() => {});
